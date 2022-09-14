@@ -48,7 +48,7 @@ export default {
          //   console.log(this.param.username);
             let state = this.param.username;
             if (state === 'admin') {
-                this.$http.post('http://localhost/backgroundLogin?backId=' + this.param.username + '&password=' + this.param.password).then(res => {
+                this.$http.post('http://localhost:8080/backgroundLogin?backId=' + this.param.username + '&password=' + this.param.password).then(res => {
                     console.log(res);
                     if (res.data.code === 200) {
                         console.log(res.data.data);
@@ -65,7 +65,7 @@ export default {
                 });
             } else {
 
-                this.$http.post('http://localhost/frontLogin?frontId=' + this.param.username + '&password=' + this.param.password).then(res => {
+                this.$http.post('http://localhost:8080/frontLogin?frontId=' + this.param.username + '&password=' + this.param.password).then(res => {
                 //    console.log(res);
                     if (res.data.code === 200) {
                         console.log(res.data.data);
