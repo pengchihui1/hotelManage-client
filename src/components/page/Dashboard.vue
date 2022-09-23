@@ -9,17 +9,17 @@
                             <div class="user-info-name">{{ name }}</div>
                             <div>{{ role }}</div>
                         </div>
-                    </div>
+                    </div>`
                     <div class="user-info-list">
                         登录地点：
-                        <span>    成都</span>
+                        <span>成都</span>
                     </div>
                     <div class="user-info-list">
                         上次登录时间：
                         <span>2021-1-12</span>
                     </div>
                 </el-card>
-                <!--
+             
             <el-card shadow="hover" style="height:252px;">
                 <div slot="header" class="clearfix">
                     <span>房间总量详情</span>
@@ -110,7 +110,7 @@
                     <el-col :span="12">
                         <el-card shadow="hover">
                             <schart ref="line" class="schart" canvasId="line" :options="options2"></schart>
-                        </el-card>-->
+                        </el-card>
             </el-col>
         </el-row>
     </div>
@@ -119,6 +119,7 @@
 <script>
 import Schart from 'vue-schart';
 import bus from '../common/bus';
+import { location } from "../../utils/Location";
 
 export default {
     name: 'dashboard',
@@ -234,39 +235,55 @@ export default {
             return this.name === 'admin' ? '超级管理员' : '前台管理员';
         }
     },
-    // created() {
-    //     this.handleListener();
-    //     this.changeDate();
+    // mounted(){
+    //     this.getLocation(); // 调用获取地理位置
     // },
-    // activated() {
-    //     this.handleListener();
-    // },
-    // deactivated() {
-    //     window.removeEventListener('resize', this.renderChart);
-    //     bus.$off('collapse', this.handleBus);
-    // },
+    created() {
+        this.handleListener();
+        this.changeDate();
+    },
+    activated() {
+        this.handleListener();
+    },
+    deactivated() {
+        window.removeEventListener('resize', this.renderChart);
+        bus.$off('collapse', this.handleBus);
+    },
     methods: {
+        /**获取地图定位 1*/
+        // getLocation() {
+        //     let _that = this;
+        //     let geolocation = location.initMap("map-container"); //定位
+        //     AMap.event.addListener(geolocation, "complete", result => {
+        //         console.log(result)
+        //         _that.lat = result.position.lat;
+        //         _that.lng = result.position.lng;
+        //         _that.province = result.addressComponent.province;
+        //         _that.city = result.addressComponent.city;
+        //         _that.district = result.addressComponent.district;
+        //     });
+        // },
         changeDate () {
             const now = new Date().getTime();
             this.data.forEach((item, index) => {
                 const date = new Date(now - (6 - index) * 86400000);
                 item.name = `${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()}`;
             });
+        },
+        handleListener() {
+            bus.$on('collapse', this.handleBus);
+            // 调用renderChart方法对图表进行重新渲染
+            window.addEventListener('resize', this.renderChart);
+        },
+        handleBus(msg) {
+            setTimeout(() => {
+                this.renderChart();
+            }, 200);
+        },
+        renderChart() {
+            this.$refs.bar.renderChart();
+            this.$refs.line.renderChart();
         }
-        // handleListener() {
-        //     bus.$on('collapse', this.handleBus);
-        //     // 调用renderChart方法对图表进行重新渲染
-        //     window.addEventListener('resize', this.renderChart);
-        // },
-        // handleBus(msg) {
-        //     setTimeout(() => {
-        //         this.renderChart();
-        //     }, 200);
-        // },
-        // renderChart() {
-        //     this.$refs.bar.renderChart();
-        //     this.$refs.line.renderChart();
-        // }
     }
 };
 </script>
